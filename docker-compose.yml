@@ -1,0 +1,14 @@
+services:
+  opennotes:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - opennotes-data:/app/data
+    environment:
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}   # Required — generate with: openssl rand -base64 32
+      - BETTER_AUTH_URL=${BETTER_AUTH_URL:-http://localhost:3000}
+    restart: unless-stopped
+
+volumes:
+  opennotes-data:

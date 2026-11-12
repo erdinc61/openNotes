@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>openNotes — Self-hosted notes + spaced repetition</title>
+  <meta name="description" content="Open-source personal knowledge base with Notion-like pages and Anki-like spaced repetition flashcards. Self-hosted, offline-ready, open source.">
+  <style>
+    :root {
+      --bg: #0c0e12;
+      --surface: #161920;
+      --border: #23272f;
+      --text: #e4e4e7;
+      --muted: #9ca3af;
+      --accent: #a1a1aa;
+      --accent-dim: rgba(161, 161, 170, 0.12);
+      --radius: 12px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Nav */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+    }
+    nav .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    nav .links { display: flex; gap: 20px; align-items: center; }
+    nav .links a { color: var(--muted); font-size: 0.9rem; }
+    nav .links a:hover { color: var(--text); text-decoration: none; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+    }
+    .btn-primary:hover { opacity: 0.9; text-decoration: none; }
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { border-color: var(--muted); text-decoration: none; }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 80px 0 40px;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 32px;
+    }
+    .hero-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    .badge-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 24px;
+    }
+
+    /* Screenshot */
+    .screenshot {
+      margin: 48px 0 80px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .screenshot img {
+      width: 100%;
+      display: block;
+    }
+
+    /* Features */
+    .features {
+      padding: 60px 0;
+    }
+    .features h2 {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 48px;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+    }
+    .feature-card .icon {
+      width: 44px;
+      height: 44px;
+      background: var(--accent-dim);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+    }
+    .feature-card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .feature-card p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    /* Screenshots Gallery */
+    .gallery {
+      padding: 60px 0;
+    }
+    .gallery h2 {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 48px;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .gallery-grid img {
+      width: 100%;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    .gallery-caption {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+
+    /* Tech Stack */
+    .stack {
+      padding: 60px 0;
+      text-align: center;
+    }
+    .stack h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 32px;
+    }
+    .stack-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    .stack-tag {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* CTA */
+    .cta {
+      text-align: center;
+      padding: 80px 0;
+    }
+    .cta h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .cta p {
+      color: var(--muted);
+      margin-bottom: 28px;
+      font-size: 1.05rem;
+    }
+    .cta-code {
+      display: inline-block;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 28px;
+      font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+      font-size: 0.9rem;
+      color: var(--accent);
+      margin-bottom: 28px;
+      user-select: all;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 640px) {
+      .gallery-grid { grid-template-columns: 1fr; }
+      .hero { padding: 48px 0 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <nav>
+    <div class="logo">openNotes</div>
+    <div class="links">
+      <a href="https://github.com/erdinc61/openNotes">GitHub</a>
+      <a href="https://github.com/erdinc61/openNotes#quick-start">Docs</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Your notes. <span>Your server.</span><br>Your flashcards.</h1>
+    <p>Open-source personal knowledge base with Notion-like pages and Anki-like spaced repetition. Self-hosted, offline-ready, open source.</p>
+    <div class="hero-buttons">
+      <a href="https://github.com/erdinc61/openNotes" class="btn btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        View on GitHub
+      </a>
+      <a href="https://github.com/erdinc61/openNotes#quick-start" class="btn btn-outline">Quick Start</a>
+    </div>
+    <div class="badge-row">
+      <img src="https://img.shields.io/github/stars/erdinc61/openNotes?style=flat&labelColor=0c0e12&color=71717a" alt="Stars">
+      <img src="https://img.shields.io/github/forks/erdinc61/openNotes?style=flat&labelColor=0c0e12&color=71717a" alt="Forks">
+      <img src="https://img.shields.io/github/license/erdinc61/openNotes?style=flat&labelColor=0c0e12&color=71717a" alt="License">
+    </div>
+  </section>
+
+  <!-- Main Screenshot -->
+  <div class="screenshot">
+    <img src="https://raw.githubusercontent.com/erdinc61/openNotes/master/assets/readme/dashboard-dark.png" alt="openNotes Dashboard">
+  </div>
+
+  <!-- Features -->
+  <section class="features">
+    <h2>Everything you need</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="icon">&#9997;</div>
+        <h3>Rich Text Editor</h3>
+        <p>Notion-like editor with slash commands, tables, task lists, code blocks, and image uploads. Powered by Tiptap.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">&#127183;</div>
+        <h3>Spaced Repetition</h3>
+        <p>SM-2 flashcard algorithm with Again/Hard/Good/Easy scheduling. Create cards from selected text instantly.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">&#128202;</div>
+        <h3>Statistics</h3>
+        <p>GitHub-style review heatmap, streak tracking, per-deck mastery breakdown, and accuracy metrics.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">&#128274;</div>
+        <h3>Self-Hosted</h3>
+        <p>Single SQLite file you own. Deploy with Docker in one command. No cloud, no subscriptions, no tracking.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">&#127763;</div>
+        <h3>Dark Mode & PWA</h3>
+        <p>Beautiful light and dark themes with adjustable UI scaling. Install as an app on any device.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">&#9997;</div>
+        <h3>Daily Tasks</h3>
+        <p>Recurring tasks on your home screen with a 7-day activity chart. Stay on track every day.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="gallery">
+    <h2>See it in action</h2>
+    <div class="gallery-grid">
+      <div>
+        <img src="https://raw.githubusercontent.com/erdinc61/openNotes/master/assets/readme/editor-light.png" alt="Editor - Light Mode">
+        <p class="gallery-caption">Page Editor</p>
+      </div>
+      <div>
+        <img src="https://raw.githubusercontent.com/erdinc61/openNotes/master/assets/readme/editor-dark.png" alt="Editor - Dark Mode">
+        <p class="gallery-caption">Editor - Dark Mode</p>
+      </div>
+      <div>
+        <img src="https://raw.githubusercontent.com/erdinc61/openNotes/master/assets/readme/review-light.png" alt="Flashcard Review">
+        <p class="gallery-caption">Flashcard Review</p>
+      </div>
+      <div>
+        <img src="https://raw.githubusercontent.com/erdinc61/openNotes/master/assets/readme/stats-dark.png" alt="Statistics">
+        <p class="gallery-caption">Statistics Dashboard</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tech Stack -->
+  <section class="stack">
+    <h2>Built with</h2>
+    <div class="stack-tags">
+      <span class="stack-tag">Next.js 16</span>
+      <span class="stack-tag">React 19</span>
+      <span class="stack-tag">TypeScript</span>
+      <span class="stack-tag">Tiptap</span>
+      <span class="stack-tag">SQLite</span>
+      <span class="stack-tag">Drizzle ORM</span>
+      <span class="stack-tag">Better Auth</span>
+      <span class="stack-tag">Tailwind CSS v4</span>
+      <span class="stack-tag">shadcn/ui</span>
+      <span class="stack-tag">Docker</span>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <h2>Get started in seconds</h2>
+    <p>Clone, run, done. No sign-ups, no API keys, no cloud.</p>
+    <div class="cta-code">docker compose up -d</div>
+    <br><br>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="https://github.com/erdinc61/openNotes" class="btn btn-primary">Star on GitHub</a>
+      <a href="https://github.com/erdinc61/openNotes/fork" class="btn btn-outline">Fork it</a>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="container">
+    MIT License &middot; Made by <a href="https://github.com/erdinc61">erdinc61</a>
+  </div>
+</footer>
+
+</body>
+</html>
