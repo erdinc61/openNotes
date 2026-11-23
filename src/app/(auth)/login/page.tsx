@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,7 +17,7 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const result = await signIn.email({ email, password });
+    const result = await signIn.username({ username, password });
     setLoading(false);
     if (result.error) {
       setError(result.error.message ?? "Login failed");
@@ -35,15 +35,16 @@ export default function LoginPage() {
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
-            <label htmlFor="email" className="text-sm font-medium">Email</label>
+            <label htmlFor="username" className="text-sm font-medium">Username</label>
             <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
+              autoComplete="username"
               className="w-full px-3 py-2 text-sm border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-              placeholder="you@example.com"
+              placeholder="username"
             />
           </div>
           <div className="space-y-1">
@@ -54,6 +55,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              autoComplete="current-password"
               className="w-full px-3 py-2 text-sm border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
               placeholder="••••••••"
             />

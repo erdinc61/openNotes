@@ -8,8 +8,7 @@ import { Button } from "@/components/ui/button";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,7 +17,12 @@ export default function RegisterPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const result = await signUp.email({ name, email, password });
+    const result = await signUp.email({
+      name: username,
+      username,
+      email: `${username.toLowerCase()}@local`,
+      password,
+    });
     setLoading(false);
     if (result.error) {
       setError(result.error.message ?? "Registration failed");
@@ -36,27 +40,16 @@ export default function RegisterPage() {
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
-            <label htmlFor="name" className="text-sm font-medium">Name</label>
+            <label htmlFor="username" className="text-sm font-medium">Username</label>
             <input
-              id="name"
+              id="username"
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
+              autoComplete="username"
               className="w-full px-3 py-2 text-sm border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-              placeholder="Your name"
-            />
-          </div>
-          <div className="space-y-1">
-            <label htmlFor="email" className="text-sm font-medium">Email</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-3 py-2 text-sm border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-              placeholder="you@example.com"
+              placeholder="username"
             />
           </div>
           <div className="space-y-1">
@@ -67,6 +60,7 @@ export default function RegisterPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              autoComplete="new-password"
               className="w-full px-3 py-2 text-sm border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
               placeholder="••••••••"
             />

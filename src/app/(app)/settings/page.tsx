@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import { UIScaleSlider } from "@/components/UIScaleSlider";
 import { LogoutButton } from "@/components/LogoutButton";
+import { AccountSettings } from "@/components/AccountSettings";
 
 export default async function SettingsPage() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -26,13 +27,9 @@ export default async function SettingsPage() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-border p-4 space-y-2">
-          <h2 className="font-medium text-foreground">Account</h2>
-          <div className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">Email: </span>
-            {session.user.email}
-          </div>
-        </div>
+        <AccountSettings
+          currentUsername={(session.user as Record<string, unknown>).username as string ?? ""}
+        />
 
         <div className="rounded-lg border border-border p-4 space-y-3">
           <h2 className="font-medium text-foreground">Session</h2>
